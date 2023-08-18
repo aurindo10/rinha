@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"rinha/config"
+	"rinha/db/schemas"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -15,7 +16,6 @@ func ConnectToDb() error {
 	host := config.Config("HOST")
 	port := config.Config("PORT")
 	db_name := config.Config("POSTGRESQL_DATABASE")
-	println(user, password, port)
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=America/Sao_Paulo",host,user,password,db_name,port)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	// db, err := gorm.Open(postgres.New(postgres.Config{
@@ -25,9 +25,8 @@ func ConnectToDb() error {
 	if err != nil {
 		panic("failed to connect database")
 	  }
-	// db.AutoMigrate(&User{})	
-
-
+	db.AutoMigrate(&schemas.Pessoas{})	
+	db.AutoMigrate(&schemas.Stack{})	
 	DB = db
 	return nil
 }
