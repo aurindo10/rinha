@@ -22,11 +22,16 @@ func ConnectToDb() error {
 	// 	DSN: dsn,
 	// 	PreferSimpleProtocol: true, // disables implicit prepared statement usage
 	//   }), &gorm.Config{})
+
+
 	if err != nil {
 		panic("failed to connect database")
 	  }
-	db.AutoMigrate(&schemas.Pessoas{})	
-	db.AutoMigrate(&schemas.Stack{})	
+	  if err = db.AutoMigrate(&schemas.Pessoas{}, &schemas.Stack{}); err != nil {
+		return fmt.Errorf("failed to migrate database: %v", err)
+	}
+	
 	DB = db
+
 	return nil
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"rinha/db"
+	handlers "rinha/handler"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -13,8 +14,9 @@ func main(){
 		panic(err)
 	}
 	app := fiber.New()
+	handlers.PessoaHandler(app)
 
-	if error := app.Listen(":3000"); error != nil {
+	if error := app.Listen(":4000"); error != nil {
 		panic(error)
 	}
 	println("Server is running on port 3000")
