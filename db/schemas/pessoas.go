@@ -9,11 +9,11 @@ import (
 	"gorm.io/gorm"
 )
 type Pessoas struct {
-	ID         string       `gorm:"primaryKey"`
-	Apelido    string       `gorm:"type:varchar(32)"`
-	Nome       string       `gorm:"type:varchar(100)"`
-	Nascimento time.Time 	`gorm:"type:date"`
-	Stack      pq.StringArray  `gorm:"type:varchar(32)[]"`
+	ID         string       `gorm:"primaryKey" json:"id"`
+	Apelido    string       `gorm:"type:varchar(32)" json:"apelido"`
+	Nome       string       `gorm:"type:varchar(100)" json:"nome"`
+	Nascimento time.Time 	`gorm:"type:date" json:"nascimento"`
+	Stack      pq.StringArray  `gorm:"type:varchar(32)[]" json:"stack"`
 }
 
 func (pessoa *Pessoas) BeforeCreate(tx *gorm.DB) (err error) {

@@ -8,4 +8,5 @@ import (
 
 func PessoaHandler(app *fiber.App)  {
 	app.Post("/pessoas", controllers.CreatePessoa)
-} 	
+	app.Get("/pessoas/:id", controllers.GetPessoa)
+} 		
