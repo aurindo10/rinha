@@ -2,16 +2,18 @@ package schemas
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"gorm.io/gorm"
 )
 type Pessoas struct {
 	ID         string       `gorm:"primaryKey"`
 	Apelido    string       `gorm:"type:varchar(32)"`
 	Nome       string       `gorm:"type:varchar(100)"`
-	Nascimento string       `gorm:"type:varchar(10)"`
-	Stack        []Stack    `gorm:"foreignKey:PessoaId"`
+	Nascimento time.Time 	`gorm:"type:date"`
+	Stack      pq.StringArray  `gorm:"type:varchar(32)[]"`
 }
 
 func (pessoa *Pessoas) BeforeCreate(tx *gorm.DB) (err error) {
