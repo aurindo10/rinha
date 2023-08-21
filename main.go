@@ -16,8 +16,9 @@ func main(){
 	app := fiber.New()
 	handlers.PessoaHandler(app)
 
-	if error := app.Listen(":4000"); error != nil {
+	if error := app.Listen(":80"); error != nil {
 		panic(error)
 	}
-	println("Server is running on port 3000")
+	println("Server is running on port 80")
+	
 }

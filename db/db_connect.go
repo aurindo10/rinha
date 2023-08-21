@@ -2,8 +2,9 @@ package db
 
 import (
 	"fmt"
-	"rinha/config"
+	"os"
 	"rinha/db/schemas"
+	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -11,21 +12,34 @@ import (
 )
 
 var DB *gorm.DB
+
 func ConnectToDb() error {
-	user := config.Config("POSTGRESQL_USERNAME")
-	password := config.Config("POSTGRESQL_PASSWORD")
-	host := config.Config("HOST")
-	port := config.Config("PORT")
-	db_name := config.Config("POSTGRESQL_DATABASE")
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=America/Sao_Paulo",host,user,password,db_name,port)
+	user := os.Getenv("POSTGRESQL_USERNAME")
+	password := os.Getenv("POSTGRESQL_PASSWORD")
+	host := os.Getenv("HOST")
+	port := os.Getenv("PORT")
+	db_name := os.Getenv("POSTGRESQL_DATABASE")
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=America/Sao_Paulo", host, user, password, db_name, port)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info), 
+		Logger: logger.Default.LogMode(logger.Info),
 	})
 
 	if err != nil {
 		panic("failed to connect database")
-	  }
-	  if err = db.AutoMigrate(&schemas.Pessoas{}); err != nil {
+	}
+
+	// Configurando o pool de conexão
+	sqlDB, dbErr := db.DB() // Obtem o sql.DB subjacente
+	if dbErr != nil {
+		return fmt.Errorf("failed to get underlying sql.DB: %v", dbErr)
+	}
+
+	// Configurando as conexões
+	sqlDB.SetMaxIdleConns(25)
+	sqlDB.SetMaxOpenConns(25)
+	sqlDB.SetConnMaxLifetime(15 * time.Minute)
+
+	if err = db.AutoMigrate(&schemas.Pessoas{}); err != nil {
 		return fmt.Errorf("failed to migrate database: %v", err)
 	}
 

@@ -10,8 +10,8 @@ import (
 )
 type Pessoas struct {
 	ID         string       `gorm:"primaryKey" json:"id"`
-	Apelido    string       `gorm:"type:varchar(32)" json:"apelido"`
-	Nome       string       `gorm:"type:varchar(100)" json:"nome"`
+	Apelido    string       `gorm:"type:varchar(32);index" json:"apelido"`
+	Nome       string       `gorm:"type:varchar(100);index" json:"nome"`
 	Nascimento time.Time 	`gorm:"type:date" json:"nascimento"`
 	Stack      pq.StringArray  `gorm:"type:varchar(32)[]" json:"stack"`
 }

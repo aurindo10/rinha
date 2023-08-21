@@ -83,3 +83,38 @@ func GetPessoa(c *fiber.Ctx)error {
 	return c.Status(fiber.StatusOK).JSON(pessoaResp)
 
 }
+
+func GetPessoaByTerm(c *fiber.Ctx) error {
+	pessoas := &[]schemas.Pessoas{}
+	term := c.Query("t", "")
+	if term == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"message": "t não pode ser vazio",
+		})
+	}
+	if result := db.DB.Where(
+		"Nome LIKE ? OR Apelido LIKE ? OR ? = ANY(Stack)",
+		"%" + term + "%", "%" + term + "%", term,
+	).Limit(5).Find(pessoas).Error; result != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": true,
+			"message": result.Error,
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(pessoas)
+}
+
+
+func GetNumberOfPessoas(c *fiber.Ctx) error {
+	pessoa := &schemas.Pessoas{}
+	var count int64
+
+	if err := db.DB.Model(pessoa).Count(&count).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"message": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"total": count})
+}
